@@ -26,7 +26,7 @@ Make assembly file
 llc {bitcode}.bc
 ```
 
-Put asm through linker to create executable
+Put bitcode file through linker to create executable
 ```
-clang -lstdc++ {asm-file}.s -o {executable}.out
+clang -lstdc++ {bitcode}.bc -o {executable}.out
 ```
