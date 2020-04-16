@@ -18,29 +18,24 @@ using namespace llvm;
 using namespace std;
 
 namespace {
-    class NontemporalAnalysis : public ModulePass {
+    class NontemporalAnalysis : public LoopPass {
 
         public:
             static char ID;
 
-            NontemporalAnalysis() : ModulePass(ID) { }
+            NontemporalAnalysis() : LoopPass(ID) { }
             ~NontemporalAnalysis() { }
 
-            // void NontemporalAnalysis::getAnalysisUsage(AnalysisUsage &AU) const {
-            //     AU.addRequired<NontemporalAnalysis>();
-            //     AU.setPreservesAll();
-            // }
+            void getAnalysisUsage(AnalysisUsage &AU) const {
+                AU.setPreservesAll();
+            }
 
-            bool runOnModule(Module& M) {
-                for (auto &F : M) {
-                    LLVMContext& C = F.getContext();
-                    auto name = F.getName().str();
-                    if (name.find("critical") == string::npos) continue;
-                    // outs() << F.getName() << "\n";
-                    for (auto &BB : F) {
-                        for (auto &I : BB) {
-                            if (isa<llvm::StoreInst>(I)) {
-                                auto MDN = MDNode::get(C, MDString::get(C, to_string(1)));
+            bool runOnLoop(Loop* L, LPPassManager &LPM) {
+                for (BasicBlock* BB : L->getBlocks()) {
+                    for (Instruction &I : *BB) {
+                        if (auto si = dyn_cast<StoreInst>(&I)) {
+                            if (si->getValueOperand()->getType()->isVectorTy()) {
+                                auto MDN = MDNode::get(BB->getContext(), MDString::get(BB->getContext(), to_string(1)));
                                 I.setMetadata("nontemporal",MDN);
                                 outs() << "Set non-temporal\n";
                             }
