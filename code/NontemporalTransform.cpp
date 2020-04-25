@@ -2,53 +2,68 @@
 // Group: wxl and wfan
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "llvm/IR/Function.h"
-#include "llvm/Pass.h"
-#include "llvm/IR/Constants.h"
-#include "llvm/Support/raw_ostream.h"
-#include "llvm/ADT/BitVector.h"
-#include "llvm/Analysis/LoopPass.h"
-#include "llvm/Analysis/AliasAnalysis.h"
-#include "llvm/Analysis/ValueTracking.h"
-#include "llvm/Transforms/Utils/ValueMapper.h"
-#include <string>
 
+#include "llvm/Pass.h"
+#include "llvm/IR/Module.h"
+#include "llvm/Support/raw_ostream.h"
+#include "llvm/Support/CommandLine.h"
 
 using namespace llvm;
 using namespace std;
 
-namespace {
-    class NontemporalAnalysis : public LoopPass {
+class NontemporalTransform : public ModulePass {
+public:
+  static char ID;
+  NontemporalTransform() : ModulePass(ID) { }
 
-        public:
-            static char ID;
+  virtual void getAnalysisUsage(AnalysisUsage &AU) const;
+  virtual bool runOnModule(Module&);
+};
 
-            NontemporalAnalysis() : LoopPass(ID) { }
-            ~NontemporalAnalysis() { }
+void NontemporalTransform::getAnalysisUsage(AnalysisUsage &AU) const {
+  AU.addRequired<SymbolicRangeAnalysis>();
+  AU.setPreservesAll();
+}
 
-            void getAnalysisUsage(AnalysisUsage &AU) const {
-                AU.setPreservesAll();
-            }
+static RegisterPass<NontemporalTransform>
+  X("nt-transform", "15-745 Nontemporal Memory Instruction Transformation Pass");
+char NontemporalTransform::ID = 0;
 
-            bool runOnLoop(Loop* L, LPPassManager &LPM) {
-                for (BasicBlock* BB : L->getBlocks()) {
-                    for (Instruction &I : *BB) {
-                        if (auto si = dyn_cast<StoreInst>(&I)) {
-                            if (si->getValueOperand()->getType()->isVectorTy()) {
-                                auto MDN = MDNode::get(BB->getContext(), MDString::get(BB->getContext(), to_string(1)));
-                                I.setMetadata("nontemporal",MDN);
-                                outs() << "Set non-temporal\n";
-                            }
-                        }
+bool NontemporalTransform::runOnModule(Module& M) {
+  for (auto &F : M) {
+    if (F.isIntrinsic() || F.isDeclaration())
+      continue;
+
+    auto &SRA = getAnalysis<SymbolicRangeAnalysis>(F);
+
+    for (auto &BB : F) {
+        for (auto &I : BB) {
+            if (auto si = dyn_cast<StoreInst>(&I)) {
+                if (SRA.canOptimize(&I) && // TODO
+                    si->getValueOperand()->getType()->isVectorTy()) {
+                    auto MDN = MDNode::get(BB->getContext(),
+                                           MDString::get(BB->getContext(),
+                                           to_string(1)));
+                    I.setMetadata("nontemporal",MDN);
+                    if (_DEBUG) {
+                        outs() << "Set non-temporal\n";
                     }
                 }
-                return true;
-
             }
-        private:
-    };
+        }
+    }
 
-    char NontemporalAnalysis::ID = 0;
-    RegisterPass<NontemporalAnalysis> X("nontemporal-pass",
-            "15745 Nontemporal Memory Instruction Insert Pass");
+    // LLVMContext& C = M.getContext();
+    // std::string Range;
+    // raw_string_ostream Stream(Range);
+    // for (auto &BB : F)
+    //   for (auto &I : BB)
+    //     if (I.getType()->isIntegerTy()) {
+        //   Stream << SRA.getStateOrInf(&I);
+    //       I.setMetadata("sra", MDNode::get(C, MDString::get(C, Stream.str())));
+    //       Stream.str().clear();
+    //     }
+  }
+
+  return true;
 }
