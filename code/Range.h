@@ -5,7 +5,8 @@
 
 class Range {
 public:
-    Range(int64_t Lower, int64_t Upper) : Lower_(Lower), Upper_(Upper) {}
+    Range(int64_t Lower, int64_t Upper, int32_t Stride) :
+        Lower_(Lower), Upper_(Upper), Stride_(Stride) {}
 
 	int64_t getLower() const { return Lower_; }
 	int64_t getUpper() const { return Upper_; }
@@ -29,30 +30,23 @@ public:
         return false;
     }
 
-    // Range operator+(const Range& Other) {
-    //     return Range(getLower() + Other.getLower(), getUpper() + Other.getUpper());
-    // }
-    // Range operator-(const Range& Other) {
-    //     return Range(getLower() - Other.getUpper(), getUpper() - Other.getLower());
-    // }
-    // Range operator*(const Range& Other) {
-    //     int64_t LL = getLower() * Other.getLower(),
-    //             LU = getLower() * Other.getUpper(),
-    //             UL = getUpper() * Other.getLower(),
-    //             UU = getUpper() * Other.getUpper();
-    //     return Range(std::min(LL,std::min(LU,std::min(UL,UU))), std::max(LL,std::max(LU,std::max(UL,UU))));
-    // }
-    // Range operator/(const Range& Other) {
-    //     int64_t LL = getLower()/Other.getLower(),
-    //             LU = getLower()/Other.getUpper(),
-    //             UL = getUpper()/Other.getLower(),
-    //             UU = getUpper()/Other.getUpper();
-    //     return Range(std::min(LL,std::min(LU,std::min(UL,UU))), std::max(LL,std::max(LU,std::max(UL,UU))));
-    // }
+    Range operator+(const int op) {
+        return Range(getLower() + op, getUpper() + op, getStride());
+    }
+    Range operator-(const int op) {
+        return Range(getLower() - op, getUpper() - op, getStride());
+    }
+    Range operator*(const int op) {
+        return Range(getLower() * op, getUpper() * op, getStride() * op);
+    }
+    Range operator/(const int op) {
+        return Range(getLower() / op, getUpper() / op, getStride() / op);
+    }
 
 	bool operator==(const Range& Other) {
         return getLower() == Other.getLower() &&
-               getUpper() == Other.getUpper();
+               getUpper() == Other.getUpper() &&
+               getStride() == Other.getStride();
     }
 	bool operator!=(const Range& Other) {
         return !(*this == Other);
