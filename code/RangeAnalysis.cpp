@@ -12,18 +12,21 @@ bool RangeAnalysis::runOnLoop(Loop* L, LPPassManager &LPM) {
     LoopInfo &LI = getAnalysis<LoopInfoWrapperPass>().getLoopInfo();
     auto &SE = getAnalysis<ScalarEvolutionWrapperPass>().getSE();
 
+    // auto IV = L->getInductionVariable(SE);
+    Optional< Loop::LoopBounds > bounds = L->getBounds(SE);
+    if (bounds.hasValue()) {
+        outs() << bounds.getValue().getInitialIVValue() << "\n";
+    }
+    else {
+        outs() << "YEET\n";
+    }
 
-    for (BasicBlock *BB: L->getBlocks()) {
-        for (Instruction &I: *BB) {
-            if (PHINode* phi = dyn_cast<PHINode>(&I)) {
-                Optional< Loop::LoopBounds > bounds = Loop::LoopBounds::getBounds(*L,*phi,SE);
-                if (bounds.hasValue()) {
-                    outs() << bounds.getValue().getInitialIVValue() << "\n";
-                }
-                else {
-                    outs() << "YEET\n";
-                }
-            }
+    // for (BasicBlock *BB: L->getBlocks()) {
+    //     for (Instruction &I: *BB) {
+    //         if (PHINode* phi = dyn_cast<PHINode>(&I)) {
+                
+                
+    //         }
             // if (auto si = dyn_cast<StoreInst>(&I)) {
             //     auto SCEV = SE.getSCEV(si->getValueOperand());
             //     ConstantRange R = SE.getSignedRange(SCEV);
@@ -32,8 +35,8 @@ bool RangeAnalysis::runOnLoop(Loop* L, LPPassManager &LPM) {
             //     outs() << "Upper: " << upper << ", Lower: " << lower << "\n";
             //     outs() << *SCEV << "\n";
             // }
-        }
-    }
+        // }
+    // }
 
     return false;
 }
