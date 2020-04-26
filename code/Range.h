@@ -9,9 +9,11 @@ public:
 
 	int64_t getLower() const { return Lower_; }
 	int64_t getUpper() const { return Upper_; }
+    int32_t getStride() const { return Stride_; }
 
 	void setLower(const int64_t& Lower) { Lower_ = Lower; }
 	void setUpper(const int64_t& Upper) { Upper_ = Upper; }
+    void setStride(const int32_t& Stride) { Stride_ = Stride; }
 
     // Range operator+(const Range& Other) {
     //     return Range(getLower() + Other.getLower(), getUpper() + Other.getUpper());
