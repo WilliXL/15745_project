@@ -5,7 +5,7 @@
 
 
 int critical(int* buf) {
-    #pragma clang loop vectorize(enable) interleave(enable)
+    // #pragma clang loop vectorize(enable) interleave(enable)
     for (int ii = 0; ii < 10000000; ++ii) {
         buf[ii] = ii * ii - ii; // something simple
     }

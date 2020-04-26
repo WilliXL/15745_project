@@ -12,16 +12,26 @@ bool RangeAnalysis::runOnLoop(Loop* L, LPPassManager &LPM) {
     LoopInfo &LI = getAnalysis<LoopInfoWrapperPass>().getLoopInfo();
     auto &SE = getAnalysis<ScalarEvolutionWrapperPass>().getSE();
 
+
     for (BasicBlock *BB: L->getBlocks()) {
         for (Instruction &I: *BB) {
-            if (auto si = dyn_cast<StoreInst>(&I)) {
-                auto SCEV = SE.getSCEV(si->getValueOperand());
-                ConstantRange R = SE.getSignedRange(SCEV);
-                auto upper = SE.getSignedRangeMax(SCEV);
-                auto lower = SE.getSignedRangeMin(SCEV);
-                outs() << "Upper: " << b.to_string() << ", Lower: " << lower << "\n";
-                outs() << *SCEV << "\n";
+            if (PHINode* phi = dyn_cast<PHINode>(&I)) {
+                Optional< Loop::LoopBounds > bounds = Loop::LoopBounds::getBounds(*L,*phi,SE);
+                if (bounds.hasValue()) {
+                    outs() << bounds.getValue().getInitialIVValue() << "\n";
+                }
+                else {
+                    outs() << "YEET\n";
+                }
             }
+            // if (auto si = dyn_cast<StoreInst>(&I)) {
+            //     auto SCEV = SE.getSCEV(si->getValueOperand());
+            //     ConstantRange R = SE.getSignedRange(SCEV);
+            //     auto upper = SE.getSignedRangeMax(SCEV);
+            //     auto lower = SE.getSignedRangeMin(SCEV);
+            //     outs() << "Upper: " << upper << ", Lower: " << lower << "\n";
+            //     outs() << *SCEV << "\n";
+            // }
         }
     }
 
