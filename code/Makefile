@@ -1,8 +1,8 @@
-all: SymbolicRangeAnalysis.so
+all: RangeAnalysis.so
 
-CXXFLAGS = -D_GLIBCXX_USE_CXX11_ABI=0 -rdynamic $(shell llvm-config-9 --cxxflags) -g -O0 -fPIC -fno-rtti
+CXXFLAGS = -rdynamic $(shell llvm-config-9 --cxxflags) -g -O0 -fPIC
 
 %.so: %.o
-	$(CXX) -dylib -shared $^ -o $@ -D_GLIBCXX_USE_CXX11_ABI=0 -fno-rtti
+	$(CXX) -dylib -shared $^ -o $@
 clean:
 	rm -f *.o *~ *.so
