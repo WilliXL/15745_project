@@ -19,6 +19,7 @@ public:
 
     virtual void getAnalysisUsage(AnalysisUsage &AU) const;
     virtual bool runOnLoop(Loop* L, LPPassManager &LPM);
+    const SCEV* getIndexVariableVectorized(ScalarEvolution& SE, const StoreInst* SI);
 
 private:
 
