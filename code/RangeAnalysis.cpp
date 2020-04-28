@@ -6,17 +6,10 @@ void RangeAnalysis::getAnalysisUsage(AnalysisUsage &AU) const {
     AU.setPreservesCFG();
 }
 
-const SCEV* RangeAnalysis::getIndexVariableVectorized(ScalarEvolution& SE, const StoreInst* SI) {
-    auto bitCast = SI->getPointerOperand();
-    if (auto bitCastInst = dyn_cast<BitCastInst>(bitCast)) {
-        auto ptr = bitCastInst->getOperand(0);
-        if (auto getEltPtrInst = dyn_cast<GetElementPtrInst>(ptr)) {
-            auto indices = getEltPtrInst->indices();
-            auto scev = SE.getSCEV(&(**(indices.begin())));
-            return scev;
-        }
-    }
-    return NULL;
+const SCEV* RangeAnalysis::getIndexVariableVectorized(ScalarEvolution& SE, StoreInst* SI) {
+    Value* bitCast = SI->getPointerOperand();
+    auto scev = SE.getSCEV(bitCast);
+    return scev;
 }
 
 bool RangeAnalysis::runOnLoop(Loop* L, LPPassManager &LPM) {
@@ -29,6 +22,7 @@ bool RangeAnalysis::runOnLoop(Loop* L, LPPassManager &LPM) {
         for (Instruction &I: *BB) {
             if (auto si = dyn_cast<StoreInst>(&I)) {
                 gep_scev.push_back(si);
+                outs() << "StoreInst: " << *si << "\n";
                 // if (auto SCEV = getIndexVariableVectorized(SE,si)) {
                 //     gep_scev.push_back(si);
                 // }
