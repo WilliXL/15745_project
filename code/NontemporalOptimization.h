@@ -4,6 +4,8 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Analysis/LoopInfo.h"
 #include "llvm/Analysis/ScalarEvolution.h"
+#include "llvm/Analysis/ScalarEvolutionExpressions.h"
+#include "llvm/IR/Constants.h"
 
 #include <map>
 
@@ -11,16 +13,31 @@
 
 using namespace llvm;
 
-class LoopAnalysis : public LoopPass {
+struct AccessPattern {
+    StoreInst* SI;
+    Value* start;
+    int end;
+    int stride;
+    int vectorWidth;
+    Type* scalarType;
+};
+
+class AccessAnalysis : public FunctionPass {
 
 public:
     static char ID;
-    LoopAnalysis() : LoopPass(ID) { }
+    AccessAnalysis() : FunctionPass(ID) { }
 
     virtual void getAnalysisUsage(AnalysisUsage &AU) const;
-    virtual bool runOnLoop(Loop* L, LPPassManager &LPM);
+    virtual bool runOnFunction(Function& F);
+    void populateMap(Function& F, ScalarEvolution& SE);
+    AccessPattern* newPatternStruct(ScalarEvolution& SE, StoreInst* SI, const SCEV* scev);
 
 private:
-    std::map <Loop*,SCEV*> LoopMap_;
+    std::map <StoreInst*,AccessPattern*> AccessMap_;
 
 };
+
+static RegisterPass<AccessAnalysis>
+  X("access-pass", "15-745 Analyze Access Patterns of Store Instructions");
+char AccessAnalysis::ID = 0;
