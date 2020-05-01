@@ -6,7 +6,7 @@
 //--------------------------------------------------------------------------------------------------
 
 void AccessAnalysis::getAnalysisUsage(AnalysisUsage &AU) const {
-    // AU.addRequired<LoopInfoWrapperPass>();
+    AU.addRequired<LoopInfoWrapperPass>();
     AU.addRequired<ScalarEvolutionWrapperPass>();
     AU.setPreservesCFG();
 }
@@ -33,12 +33,19 @@ AccessPattern* AccessAnalysis::newPatternStruct(ScalarEvolution& SE,
     return AP;
 }
 
-void AccessAnalysis::populateMap(Function& F, ScalarEvolution& SE) {
+void AccessAnalysis::populateMap(Function& F, LoopInfo& LI, ScalarEvolution& SE) {
     for (auto &BB : F) {
         for (auto &I : BB) {
             if (StoreInst* SI = dyn_cast<StoreInst>(&I)) {
-                Value* loc = SI->getPointerOperand();
+                if (Loop* L = LI.getLoopFor(&BB)) {
+                    outs() << "loop: " << *L << "\n";
+                    outs() << *SI << "\n";
+                    auto IR = IndexedReference(I, LI, SE);
+                    outs() << "isValid: " << IR.isValid() << "\n";
+                    outs() << "ref cost: " << IR.computeRefCost(L, 64) << "\n";
+                }
 
+                Value* loc = SI->getPointerOperand();
                 // true if vectorized, which is what we care about
                 if (BitCastInst* BCI = dyn_cast<BitCastInst>(loc)) {
                     if (GetElementPtrInst* GEPI = dyn_cast<GetElementPtrInst>(BCI->getOperand(0))) {
@@ -64,9 +71,10 @@ void AccessAnalysis::populateMap(Function& F, ScalarEvolution& SE) {
 }
 
 bool AccessAnalysis::runOnFunction(Function& F) {
+    LoopInfo &LI = getAnalysis<LoopInfoWrapperPass>().getLoopInfo();
     auto &SE = getAnalysis<ScalarEvolutionWrapperPass>().getSE();
 
-    populateMap(F,SE);
+    populateMap(F, LI, SE);
 
     return false;
 }
