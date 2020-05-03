@@ -11,6 +11,7 @@
 
 #include <map>
 #include <vector>
+#include <string>
 
 #define DEBUG_ 1
 #define MIN_REUSE_DIST 1000
@@ -26,6 +27,12 @@ public:
     virtual void getAnalysisUsage(AnalysisUsage &AU) const;
     virtual bool runOnFunction(Function& F);
     virtual bool doInitialization(Function& F);
+    std::pair<std::map<BasicBlock*, BitVector>, std::map<BasicBlock*, BitVector>> doDfaAnalysis(Function &F);
+    bool ptsToSameStruct(Instruction* instOne, Instruction* instTwo);
+    void insertNontemporalInstruction(Instruction* inst);
+    int getReuseDistance(Instruction* instOne, Instruction* instTwo, LoopInfo &LI, ScalarEvolution &SE, DependenceInfo &DI, AliasAnalysis &AA);
+    void insertNontemporalInsts(LoopInfo &LI, ScalarEvolution &SE, DependenceInfo &DI, AliasAnalysis &AA);
+    unsigned getLoopCacheFootprint(Loop* L, LoopInfo &LI, ScalarEvolution &SE);
 
 private:
     std::map<Instruction*,int> InstsToIdx_;
