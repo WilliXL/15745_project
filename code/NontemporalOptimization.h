@@ -14,15 +14,6 @@
 
 using namespace llvm;
 
-struct AccessPattern {
-    StoreInst* SI;
-    Value* start;
-    int end;
-    int stride;
-    int vectorWidth;
-    Type* scalarType;
-};
-
 class AccessAnalysis : public FunctionPass {
 
 public:
@@ -31,11 +22,8 @@ public:
 
     virtual void getAnalysisUsage(AnalysisUsage &AU) const;
     virtual bool runOnFunction(Function& F);
-    void populateMap(Function& F, LoopInfo& LI, ScalarEvolution& SE);
-    AccessPattern* newPatternStruct(ScalarEvolution& SE, StoreInst* SI, const SCEV* scev);
 
 private:
-    std::map <StoreInst*,AccessPattern*> AccessMap_;
 
 };
 
