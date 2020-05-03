@@ -9,6 +9,9 @@ int critical(int* buf) {
     for (int ii = 0; ii < 10000000; ++ii) {
         buf[ii] = ii * ii - ii; // something simple
     }
+    for (int yeet = 1; yeet < 100; ++yeet) {
+        buf[yeet] = buf[yeet-1];
+    }
     for (int jj = 1; jj < 10000000; jj += 2) {
         buf[jj] = buf[jj-1];
     }
