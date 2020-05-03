@@ -17,24 +17,36 @@ define dso_local i32 @_Z8criticalPi(i32* nocapture %0) local_unnamed_addr #0 {
   store i32 %7, i32* %8, align 4, !tbaa !2
   %9 = add nuw nsw i64 %3, 1
   %10 = icmp eq i64 %9, 10000000
-  br i1 %10, label %.preheader, label %2
+  br i1 %10, label %11, label %2
 
-.preheader:                                       ; preds = %2
-  br label %12
+11:                                               ; preds = %2
+  %12 = load i32, i32* %0, align 4
+  br label %13
 
-11:                                               ; preds = %12
+13:                                               ; preds = %11, %13
+  %14 = phi i64 [ %16, %13 ], [ 1, %11 ]
+  %15 = getelementptr inbounds i32, i32* %0, i64 %14
+  store i32 %12, i32* %15, align 4, !tbaa !2
+  %16 = add nuw nsw i64 %14, 1
+  %17 = icmp eq i64 %16, 100
+  br i1 %17, label %.preheader, label %13
+
+.preheader:                                       ; preds = %13
+  br label %19
+
+18:                                               ; preds = %19
   ret i32 0
 
-12:                                               ; preds = %.preheader, %12
-  %13 = phi i64 [ %18, %12 ], [ 1, %.preheader ]
-  %14 = add nsw i64 %13, -1
-  %15 = getelementptr inbounds i32, i32* %0, i64 %14
-  %16 = load i32, i32* %15, align 4, !tbaa !2
-  %17 = getelementptr inbounds i32, i32* %0, i64 %13
-  store i32 %16, i32* %17, align 4, !tbaa !2
-  %18 = add nuw nsw i64 %13, 2
-  %19 = icmp ult i64 %13, 9999998
-  br i1 %19, label %12, label %11
+19:                                               ; preds = %.preheader, %19
+  %20 = phi i64 [ %25, %19 ], [ 1, %.preheader ]
+  %21 = add nsw i64 %20, -1
+  %22 = getelementptr inbounds i32, i32* %0, i64 %21
+  %23 = load i32, i32* %22, align 4, !tbaa !2
+  %24 = getelementptr inbounds i32, i32* %0, i64 %20
+  store i32 %23, i32* %24, align 4, !tbaa !2
+  %25 = add nuw nsw i64 %20, 2
+  %26 = icmp ult i64 %20, 9999998
+  br i1 %26, label %19, label %18
 }
 
 ; Function Attrs: norecurse nounwind uwtable
