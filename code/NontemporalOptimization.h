@@ -8,13 +8,14 @@
 #include "llvm/IR/Constants.h"
 #include "llvm/Analysis/LoopCacheAnalysis.h"
 #include "Dataflow.h"
+#include "available-support.h"
 
 #include <map>
 #include <vector>
 #include <string>
 
 #define DEBUG_ 1
-#define MIN_REUSE_DIST 1000
+#define MIN_REUSE_DIST 128000
 
 using namespace llvm;
 
@@ -26,7 +27,7 @@ public:
 
     virtual void getAnalysisUsage(AnalysisUsage &AU) const;
     virtual bool runOnFunction(Function& F);
-    virtual bool doInitialization(Function& F);
+    bool populateInstsMap(Function &F);
     std::pair<std::map<BasicBlock*, BitVector>, std::map<BasicBlock*, BitVector>> doDfaAnalysis(Function &F);
     bool ptsToSameStruct(Instruction* instOne, Instruction* instTwo);
     void insertNontemporalInstruction(Instruction* inst);
