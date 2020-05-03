@@ -12,7 +12,7 @@ int critical(int* buf) {
     for (int yeet = 1; yeet < 100; ++yeet) {
         buf[yeet] = buf[yeet-1];
     }
-    for (int jj = 1; jj < 10000000; jj += 2) {
+    for (int jj = 1; jj < 10000000; ++jj) {
         buf[jj] = buf[jj-1];
     }
     return 0;
