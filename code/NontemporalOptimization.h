@@ -7,10 +7,13 @@
 #include "llvm/Analysis/ScalarEvolutionExpressions.h"
 #include "llvm/IR/Constants.h"
 #include "llvm/Analysis/LoopCacheAnalysis.h"
+#include "Dataflow.h"
 
 #include <map>
+#include <vector>
 
 #define DEBUG_ 1
+#define MIN_REUSE_DIST 1000
 
 using namespace llvm;
 
@@ -22,9 +25,12 @@ public:
 
     virtual void getAnalysisUsage(AnalysisUsage &AU) const;
     virtual bool runOnFunction(Function& F);
+    virtual bool doInitialization(Function& F);
 
 private:
-
+    std::map<Instruction*,int> InstsToIdx_;
+    std::map<BasicBlock*, BitVector> BBOuts_;
+    std::vector<Instruction*> InstVector_;
 };
 
 static RegisterPass<AccessAnalysis>
