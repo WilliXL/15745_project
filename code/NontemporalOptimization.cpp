@@ -45,7 +45,10 @@ bool AccessAnalysis::populateInstsMap(Function &F) {
                 InstVector_.push_back(&I);
             }
             if (isa<LoadInst>(I)) {
-                if (!dyn_cast<GetElementPtrInst>((dyn_cast<LoadInst>(&I))->getPointerOperand())) continue;
+                if (!dyn_cast<GetElementPtrInst>((dyn_cast<LoadInst>(&I))->getPointerOperand())){
+                    outs() << "load wo pointer operand: " << I << "\n";
+                    continue;
+                }
                 InstsToIdx_[&I] = idx;
                 idx++;
                 InstVector_.push_back(&I);
@@ -125,6 +128,14 @@ int AccessAnalysis::getReuseDistance(Instruction* instOne, Instruction* instTwo,
     Loop* LoopTwo = LI.getLoopFor(BBTwo);
     auto IROne = IndexedReference(*instOne, LI, SE); // TODO member variables???
     auto IRTwo = IndexedReference(*instTwo, LI, SE);
+    if (!IROne.isValid()) {
+        outs() << "IROne not valid\n";
+        return 0;
+    }
+    if (!IRTwo.isValid()) {
+        outs() << "IRTwo not valid\n";
+        return 0;
+    }
 
     if (LoopOne == LoopTwo) {
         auto hasTempReuse = IROne.hasTemporalReuse(IRTwo,MIN_REUSE_DIST,*LoopOne,DI,AA);
@@ -215,7 +226,7 @@ bool AccessAnalysis::runOnFunction(Function& F) {
     populateInstsMap(F);
 
     auto accessInOut = doDfaAnalysis(F);
-    BBOuts_ = accessInOut.second;
+    BBOuts_ = accessInOut.first;
     insertNontemporalInsts(LI, SE, DI, AA);
 
     return true;
