@@ -148,8 +148,8 @@ int AccessAnalysis::getReuseDistance(Instruction* instOne, Instruction* instTwo,
             }
         } else {
             // Dont care
-            // outs() << "0 case 1\n";
-            return 0;
+            outs() << "temporal reuse unknown\n";
+            return MIN_REUSE_DIST;
         }
     }
     else if (LI.getLoopDepth(BBOne) != LI.getLoopDepth(BBTwo)) {
@@ -219,7 +219,7 @@ bool AccessAnalysis::runOnFunction(Function& F) {
     auto &DI = getAnalysis<DependenceAnalysisWrapperPass>().getDI();
     auto &AA = getAnalysis<AAResultsWrapperPass>().getAAResults();
 
-    outs() << "RUN ON FUNCTION\n";
+    outs() << "RUN ON FUNCTION " << F.getName() << "\n";
     
     InstsToIdx_.clear();
     InstVector_.clear();
