@@ -103,7 +103,7 @@ bool AccessAnalysis::ptsToSameStruct(Instruction* instOne, Instruction* instTwo)
 
 void AccessAnalysis::insertNontemporalInstruction(Instruction* inst) {
     StoreInst* SI = dyn_cast<StoreInst>(inst);
-    auto MDN = MDNode::get(inst->getParent()->getContext(), MDString::get(inst->getParent()->getContext(), std::to_string(1)));
+    auto MDN = MDNode::get(inst->getParent()->getContext(), MDString::get(inst->getParent()->getContext(), "1"));
     SI->setMetadata("nontemporal", MDN);
     outs() << "Inserted NT Inst at: " << *inst << "\n";
 }

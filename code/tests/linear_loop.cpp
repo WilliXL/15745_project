@@ -5,12 +5,13 @@
 
 
 int critical(int* buf) {
-    // #pragma clang loop vectorize(enable) interleave(enable)
-    for (int ii = 0; ii < 10000000; ++ii) {
-        buf[ii+10] = ii * ii - ii; // something simple
-        buf[ii+5] = ii * ii - ii; // something simple
+    #pragma clang loop vectorize(enable) interleave(enable)
+    for (int ii = 0; ii < 1000; ++ii) {
+        buf[ii*2+1] = ii * ii - ii; // something simple
+        buf[ii*2] = ii * ii - ii; // something simple
     }
-    return buf[0]; // access much later
+    buf[123] = 47;
+    return buf[75]; // access much later
 }
 
 int main() {

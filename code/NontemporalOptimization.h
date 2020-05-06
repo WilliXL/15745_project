@@ -8,6 +8,7 @@
 #include "llvm/IR/Constants.h"
 #include "llvm/Analysis/LoopCacheAnalysis.h"
 #include "Dataflow.h"
+#include "llvm/IR/Metadata.h"
 
 #include <map>
 #include <vector>
@@ -38,6 +39,7 @@ private:
     std::map<Instruction*,int> InstsToIdx_;
     std::map<BasicBlock*, BitVector> BBOuts_;
     std::vector<Instruction*> InstVector_;
+    int numNT = 0;
 };
 
 static RegisterPass<AccessAnalysis>
