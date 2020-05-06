@@ -39,16 +39,18 @@ bool AccessAnalysis::populateInstsMap(Function &F) {
     for (auto& BB : F) {
         for (Instruction& I : BB) {
             if (isa<StoreInst>(I)) {
-                if (!dyn_cast<GetElementPtrInst>((dyn_cast<StoreInst>(&I))->getPointerOperand())) continue;
+                // if (!dyn_cast<GetElementPtrInst>((dyn_cast<StoreInst>(&I))->getPointerOperand())) continue;
                 InstsToIdx_[&I] = idx;
                 idx++;
                 InstVector_.push_back(&I);
             }
             if (isa<LoadInst>(I)) {
+                /*
                 if (!dyn_cast<GetElementPtrInst>((dyn_cast<LoadInst>(&I))->getPointerOperand())){
                     outs() << "load wo pointer operand: " << I << "\n";
                     continue;
                 }
+                */
                 InstsToIdx_[&I] = idx;
                 idx++;
                 InstVector_.push_back(&I);
@@ -81,24 +83,18 @@ std::pair<std::map<BasicBlock*, BitVector>, std::map<BasicBlock*, BitVector>> Ac
 }
 
 bool AccessAnalysis::ptsToSameStruct(Instruction* instOne, Instruction* instTwo) {
-    // outs() << "instOne: " << *instOne << ", instTwo: " << *instTwo << "\n";
     StoreInst* SIOne = dyn_cast<StoreInst>(instOne);
-    GetElementPtrInst* GEPIOne = dyn_cast<GetElementPtrInst>(SIOne->getPointerOperand());
-    auto DSOne = GEPIOne->getPointerOperand();
+    Value *objOne = GetUnderlyingObject(SIOne->getPointerOperand(), instOne->getModule()->getDataLayout(), 6);
 
     if (StoreInst* SITwo = dyn_cast<StoreInst>(instTwo)) {
-        GetElementPtrInst* GEPITwo = dyn_cast<GetElementPtrInst>(SITwo->getPointerOperand());
-        auto DSTwo = GEPITwo->getPointerOperand();
-        return DSOne == DSTwo;
+        Value *objTwo = GetUnderlyingObject(SITwo->getPointerOperand(), instTwo->getModule()->getDataLayout(), 6);
+        return objOne == objTwo;
     }
     if (LoadInst* LITwo = dyn_cast<LoadInst>(instTwo)) {
-        GetElementPtrInst* GEPITwo = dyn_cast<GetElementPtrInst>(LITwo->getPointerOperand());
-        auto DSTwo = GEPITwo->getPointerOperand();
-        return DSOne == DSTwo;
+        Value *objTwo = GetUnderlyingObject(LITwo->getPointerOperand(), instTwo->getModule()->getDataLayout(), 6);
+        return objOne == objTwo;
     }
     return false;
-
-
 }
 
 void AccessAnalysis::insertNontemporalInstruction(Instruction* inst) {
@@ -127,11 +123,11 @@ int AccessAnalysis::getReuseDistance(Instruction* instOne, Instruction* instTwo,
     Loop* LoopOne = LI.getLoopFor(BBOne);
     Loop* LoopTwo = LI.getLoopFor(BBTwo);
     auto IROne = IndexedReference(*instOne, LI, SE); // TODO member variables???
-    auto IRTwo = IndexedReference(*instTwo, LI, SE);
     if (!IROne.isValid()) {
-        outs() << "IROne not valid\n";
+        outs() << "IROne for " << *instOne << " not valid\n";
         return 0;
     }
+    auto IRTwo = IndexedReference(*instTwo, LI, SE);
     if (!IRTwo.isValid()) {
         outs() << "IRTwo not valid\n";
         return 0;

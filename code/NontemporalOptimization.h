@@ -9,6 +9,7 @@
 #include "llvm/Analysis/LoopCacheAnalysis.h"
 #include "Dataflow.h"
 #include "llvm/IR/Metadata.h"
+#include "llvm/Analysis/ValueTracking.h"
 
 #include <map>
 #include <vector>
