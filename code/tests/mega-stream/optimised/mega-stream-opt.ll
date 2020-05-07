@@ -1158,13 +1158,13 @@ define internal void @.omp_outlined.(i32* noalias nocapture readonly %0, i32* no
   %357 = add nuw nsw i64 %356, %354
   %358 = getelementptr inbounds double, double* %345, i64 %357
   %359 = bitcast double* %358 to <2 x double>*
-  store <2 x double> <double 6.000000e-02, double 6.000000e-02>, <2 x double>* %359, align 8, !tbaa !8, !nontemporal !24, !llvm.access.group !23
+  store <2 x double> <double 6.000000e-02, double 6.000000e-02>, <2 x double>* %359, align 8, !tbaa !8, !llvm.access.group !23
   %360 = getelementptr inbounds double, double* %346, i64 %357
   %361 = bitcast double* %360 to <2 x double>*
-  store <2 x double> <double 7.000000e-02, double 7.000000e-02>, <2 x double>* %361, align 8, !tbaa !8, !nontemporal !24, !llvm.access.group !23
+  store <2 x double> <double 7.000000e-02, double 7.000000e-02>, <2 x double>* %361, align 8, !tbaa !8, !llvm.access.group !23
   %362 = getelementptr inbounds double, double* %347, i64 %357
   %363 = bitcast double* %362 to <2 x double>*
-  store <2 x double> <double 8.000000e-02, double 8.000000e-02>, <2 x double>* %363, align 8, !tbaa !8, !nontemporal !24, !llvm.access.group !23
+  store <2 x double> <double 8.000000e-02, double 8.000000e-02>, <2 x double>* %363, align 8, !tbaa !8, !llvm.access.group !23
   %364 = add i64 %356, 2
   %365 = icmp eq i64 %364, 8
   br i1 %365, label %366, label %355, !llvm.loop !25

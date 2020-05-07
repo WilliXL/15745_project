@@ -678,6 +678,15 @@ parse_args:                             # @parse_args
 .LCPI2_3:
 	.quad	4585925428558828667     # double 0.040000000000000001
 	.quad	4585925428558828667     # double 0.040000000000000001
+.LCPI2_4:
+	.quad	4588807732320345784     # double 0.059999999999999998
+	.quad	4588807732320345784     # double 0.059999999999999998
+.LCPI2_5:
+	.quad	4589708452245819884     # double 0.070000000000000007
+	.quad	4589708452245819884     # double 0.070000000000000007
+.LCPI2_6:
+	.quad	4590429028186199163     # double 0.080000000000000002
+	.quad	4590429028186199163     # double 0.080000000000000002
 	.text
 	.p2align	4, 0x90
 	.type	.omp_outlined.,@function
@@ -746,19 +755,19 @@ parse_args:                             # @parse_args
 	jle	.LBB2_3
 .LBB2_19:
 	movl	$.L__unnamed_2, %edi
-	movl	36(%rsp), %r12d         # 4-byte Reload
-	movl	%r12d, %esi
+	movl	36(%rsp), %r14d         # 4-byte Reload
+	movl	%r14d, %esi
 	callq	__kmpc_for_static_fini
 	jmp	.LBB2_20
 .LBB2_1:
-	movl	(%rdi), %r12d
+	movl	(%rdi), %r14d
 .LBB2_20:
 	movl	$.L__unnamed_3, %edi
-	movl	%r12d, %esi
+	movl	%r14d, %esi
 	callq	__kmpc_barrier
 	movl	Nm(%rip), %ebp
 	testl	%ebp, %ebp
-	movl	%r12d, 36(%rsp)         # 4-byte Spill
+	movl	%r14d, 36(%rsp)         # 4-byte Spill
 	jle	.LBB2_36
 # %bb.21:
 	leal	-1(%rbp), %ebx
@@ -773,7 +782,7 @@ parse_args:                             # @parse_args
 	leaq	20(%rsp), %r8
 	leaq	16(%rsp), %r9
 	movl	$.L__unnamed_2, %edi
-	movl	%r12d, %esi
+	movl	%r14d, %esi
 	movl	$34, %edx
 	pushq	$1
 	.cfi_adjust_cfa_offset 8
@@ -793,12 +802,12 @@ parse_args:                             # @parse_args
 	jle	.LBB2_22
 .LBB2_35:
 	movl	$.L__unnamed_2, %edi
-	movl	36(%rsp), %r12d         # 4-byte Reload
-	movl	%r12d, %esi
+	movl	36(%rsp), %r14d         # 4-byte Reload
+	movl	%r14d, %esi
 	callq	__kmpc_for_static_fini
 .LBB2_36:
 	movl	$.L__unnamed_3, %edi
-	movl	%r12d, %esi
+	movl	%r14d, %esi
 	callq	__kmpc_barrier
 	movl	Nm(%rip), %ebp
 	testl	%ebp, %ebp
@@ -816,7 +825,7 @@ parse_args:                             # @parse_args
 	leaq	20(%rsp), %r8
 	leaq	16(%rsp), %r9
 	movl	$.L__unnamed_2, %edi
-	movl	%r12d, %esi
+	movl	%r14d, %esi
 	movl	$34, %edx
 	pushq	$1
 	.cfi_adjust_cfa_offset 8
@@ -836,12 +845,12 @@ parse_args:                             # @parse_args
 	jle	.LBB2_38
 .LBB2_51:
 	movl	$.L__unnamed_2, %edi
-	movl	36(%rsp), %r12d         # 4-byte Reload
-	movl	%r12d, %esi
+	movl	36(%rsp), %r14d         # 4-byte Reload
+	movl	%r14d, %esi
 	callq	__kmpc_for_static_fini
 .LBB2_52:
 	movl	$.L__unnamed_3, %edi
-	movl	%r12d, %esi
+	movl	%r14d, %esi
 	callq	__kmpc_barrier
 	movl	Nm(%rip), %ebp
 	testl	%ebp, %ebp
@@ -859,7 +868,7 @@ parse_args:                             # @parse_args
 	leaq	20(%rsp), %r8
 	leaq	16(%rsp), %r9
 	movl	$.L__unnamed_2, %edi
-	movl	%r12d, %esi
+	movl	%r14d, %esi
 	movl	$34, %edx
 	pushq	$1
 	.cfi_adjust_cfa_offset 8
@@ -879,12 +888,12 @@ parse_args:                             # @parse_args
 	jle	.LBB2_54
 .LBB2_67:
 	movl	$.L__unnamed_2, %edi
-	movl	36(%rsp), %r12d         # 4-byte Reload
-	movl	%r12d, %esi
+	movl	36(%rsp), %r14d         # 4-byte Reload
+	movl	%r14d, %esi
 	callq	__kmpc_for_static_fini
 .LBB2_68:
 	movl	$.L__unnamed_3, %edi
-	movl	%r12d, %esi
+	movl	%r14d, %esi
 	callq	__kmpc_barrier
 	movl	Ng(%rip), %ebp
 	testl	%ebp, %ebp
@@ -902,7 +911,7 @@ parse_args:                             # @parse_args
 	leaq	20(%rsp), %r8
 	leaq	16(%rsp), %r9
 	movl	$.L__unnamed_2, %edi
-	movl	%r12d, %esi
+	movl	%r14d, %esi
 	movl	$34, %edx
 	pushq	$1
 	.cfi_adjust_cfa_offset 8
@@ -917,53 +926,50 @@ parse_args:                             # @parse_args
 	cmpl	%ebp, %eax
 	cmovll	%eax, %ebx
 	movl	%ebx, 8(%rsp)
-	movslq	12(%rsp), %r14
-	cmpl	%ebx, %r14d
+	movslq	12(%rsp), %rax
+	cmpl	%ebx, %eax
 	jg	.LBB2_74
 # %bb.70:
-	movq	200(%rsp), %rax
-	movq	192(%rsp), %rcx
-	movq	184(%rsp), %rdx
-	movq	(%rdx), %r8
-	movq	(%rcx), %r9
-	movq	(%rax), %r10
-	movslq	%ebx, %r11
-	leal	(,%r14,8), %r15d
-	movabsq	$4588807732320345784, %rbx # imm = 0x3FAEB851EB851EB8
-	movabsq	$4589708452245819884, %rcx # imm = 0x3FB1EB851EB851EC
-	movabsq	$4590429028186199163, %rdx # imm = 0x3FB47AE147AE147B
+	movq	200(%rsp), %rcx
+	movq	192(%rsp), %rdx
+	movq	184(%rsp), %rsi
+	movq	(%rsi), %r8
+	movq	(%rdx), %r9
+	movq	(%rcx), %r10
+	movslq	%ebx, %rdi
+	leal	(,%rax,8), %ebp
+	movaps	.LCPI2_4(%rip), %xmm0   # xmm0 = [5.9999999999999998E-2,5.9999999999999998E-2]
+	movaps	.LCPI2_5(%rip), %xmm1   # xmm1 = [7.0000000000000007E-2,7.0000000000000007E-2]
+	movaps	.LCPI2_6(%rip), %xmm2   # xmm2 = [8.0000000000000002E-2,8.0000000000000002E-2]
 	.p2align	4, 0x90
 .LBB2_71:                               # =>This Loop Header: Depth=1
                                         #     Child Loop BB2_72 Depth 2
-	movslq	%r15d, %rax
-	leaq	(%r10,%rax,8), %rsi
-	leaq	(%r9,%rax,8), %rdi
-	leaq	(%r8,%rax,8), %rax
-	xorl	%ebp, %ebp
+	movslq	%ebp, %rdx
+	leaq	(%r10,%rdx,8), %rbx
+	leaq	(%r9,%rdx,8), %rcx
+	leaq	(%r8,%rdx,8), %rdx
+	xorl	%esi, %esi
 	.p2align	4, 0x90
 .LBB2_72:                               #   Parent Loop BB2_71 Depth=1
                                         # =>  This Inner Loop Header: Depth=2
-	movntiq	%rbx, 8(%rax,%rbp,8)
-	movntiq	%rbx, (%rax,%rbp,8)
-	movntiq	%rcx, 8(%rdi,%rbp,8)
-	movntiq	%rcx, (%rdi,%rbp,8)
-	movntiq	%rdx, 8(%rsi,%rbp,8)
-	movntiq	%rdx, (%rsi,%rbp,8)
-	addq	$2, %rbp
-	cmpq	$8, %rbp
+	movups	%xmm0, (%rdx,%rsi,8)
+	movups	%xmm1, (%rcx,%rsi,8)
+	movups	%xmm2, (%rbx,%rsi,8)
+	addq	$2, %rsi
+	cmpq	$8, %rsi
 	jne	.LBB2_72
 # %bb.73:                               #   in Loop: Header=BB2_71 Depth=1
-	addl	$8, %r15d
-	cmpq	%r11, %r14
-	leaq	1(%r14), %r14
+	addl	$8, %ebp
+	cmpq	%rdi, %rax
+	leaq	1(%rax), %rax
 	jl	.LBB2_71
 .LBB2_74:
 	movl	$.L__unnamed_2, %edi
-	movl	%r12d, %esi
+	movl	%r14d, %esi
 	callq	__kmpc_for_static_fini
 .LBB2_75:
 	movl	$.L__unnamed_3, %edi
-	movl	%r12d, %esi
+	movl	%r14d, %esi
 	callq	__kmpc_barrier
 	movl	Nm(%rip), %ebx
 	testl	%ebx, %ebx
@@ -981,7 +987,7 @@ parse_args:                             # @parse_args
 	leaq	20(%rsp), %r8
 	leaq	16(%rsp), %r9
 	movl	$.L__unnamed_2, %edi
-	movl	%r12d, %esi
+	movl	%r14d, %esi
 	movl	$34, %edx
 	pushq	$1
 	.cfi_adjust_cfa_offset 8
@@ -1002,12 +1008,12 @@ parse_args:                             # @parse_args
 	jle	.LBB2_77
 .LBB2_86:
 	movl	$.L__unnamed_2, %edi
-	movl	36(%rsp), %r12d         # 4-byte Reload
-	movl	%r12d, %esi
+	movl	36(%rsp), %r14d         # 4-byte Reload
+	movl	%r14d, %esi
 	callq	__kmpc_for_static_fini
 .LBB2_87:
 	movl	$.L__unnamed_3, %edi
-	movl	%r12d, %esi
+	movl	%r14d, %esi
 	callq	__kmpc_barrier
 	addq	$120, %rsp
 	.cfi_def_cfa_offset 56
